@@ -1,0 +1,16 @@
+GET http://localhost:3000
+
+### `GET /paciente`
+GET http://localhost:3000/paciente/
+
+### `GET /paciente/:id`
+GET http://localhost:3000/paciente/1
+
+### `POST /paciente`
+POST http://localhost:3000/paciente/
+
+### `PUT /paciente/:id`
+PUT http://localhost:3000/paciente/1
+
+### `DELETE /paciente/:id`
+DELETE http://localhost:3000/paciente/1
