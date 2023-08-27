@@ -2,44 +2,63 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
-  Param,
+  Put,
   Delete,
+  Body,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
-import { PacienteService } from './paciente.service';
-import { CreatePacienteDto } from './dto/create-paciente.dto';
-import { UpdatePacienteDto } from './dto/update-paciente.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Paciente } from '.prisma/client';
+import { CreatePacienteDto } from './paciente.dto';
 
-@Controller('paciente')
-export class PacienteController {
-  constructor(private readonly pacienteService: PacienteService) {}
-
-  @Post()
-  create(@Body() createPacienteDto: CreatePacienteDto) {
-    return this.pacienteService.create(createPacienteDto);
-  }
+@Controller('pacientes')
+export class PacientesController {
+  constructor(private prisma: PrismaService) {}
 
   @Get()
-  findAll() {
-    return this.pacienteService.findAll();
+  async getAllPacientes(): Promise<Paciente[]> {
+    return this.prisma.paciente.findMany();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.pacienteService.findOne(id);
+  async getPaciente(@Param('id') id: number): Promise<Paciente> {
+    const paciente = await this.prisma.paciente.findUnique({
+      where: { id },
+    });
+    if (!paciente) {
+      throw new NotFoundException('Paciente não encontrado');
+    }
+    return paciente;
   }
 
-  @Patch(':id')
-  update(
+  @Post()
+  async createPaciente(
+    @Body() pacienteData: CreatePacienteDto,
+  ): Promise<Paciente> {
+    return this.prisma.paciente.create({
+      data: pacienteData,
+    });
+  }
+
+  @Put(':id')
+  async updatePaciente(
     @Param('id') id: number,
-    @Body() updatePacienteDto: UpdatePacienteDto,
-  ) {
-    return this.pacienteService.update(id, updatePacienteDto);
+    @Body() pacienteData: CreatePacienteDto,
+  ): Promise<Paciente> {
+    await this.prisma.paciente.findUnique({ where: { id } });
+    return this.prisma.paciente.update({
+      where: { id },
+      data: pacienteData,
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.pacienteService.remove(id);
+  async deletePaciente(@Param('id') id: number): Promise<void> {
+    const paciente = await this.prisma.paciente.findUnique({ where: { id } });
+    if (!paciente) {
+      throw new NotFoundException('Paciente não encontrado');
+    }
+    await this.prisma.paciente.delete({ where: { id } });
   }
 }

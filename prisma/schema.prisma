@@ -10,27 +10,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// schema.prisma
+
 model Paciente {
-  id             Int      @id @default(autoincrement())
-  nome           String
-  cpf            String?  @unique
-  dataNascimento String
-  telefone       String
-  endereco       String?
-  cidade         String?
-  estado         String?
-  pais           String?
-  cep            String?
-  email          String?  @unique
-  profissao      String?
-  comorbidades   String?
-  medicamentos   String?
-  alergias       String?
-  vacinas        String?
-  doencas        String?
-  cirurgias      String?
-  observacoes    String?
-  status         String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                Int       @id @default(autoincrement())
+  nome              String
+  dataNascimento    DateTime?
+  localNascimento   String?
+  horaNascimento    String?
+  pontoAberto       String?
+  telefone          String?
+  email             String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  consultas         Consulta[]
+  anamneses         Anamnese[]
+
 }
+
+model Consulta {
+  id           Int       @id @default(autoincrement())
+  data         DateTime
+  hora         String
+  paciente     Paciente  @relation(fields: [pacienteId], references: [id])
+  pacienteId   Int
+  observacoes  String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Anamnese {
+  id           Int       @id @default(autoincrement())
+  paciente     Paciente  @relation(fields: [pacienteId], references: [id])
+  pacienteId   Int
+  queixaPrincipal  String
+  historiaDoencaAtual  String
+  historiaPatologicaPregressa  String
+  historiaFamiliar  String
+  habitosDeVida  String
+  medicamentosEmUso  String
+  outros  String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+

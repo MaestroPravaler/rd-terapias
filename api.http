@@ -6,8 +6,19 @@ GET http://localhost:3000/paciente/
 ### `GET /paciente/:id`
 GET http://localhost:3000/paciente/1
 
-### `POST /paciente`
-POST http://localhost:3000/paciente/
+### Cria um Paciente
+POST http://localhost:3000/pacientes
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "dataNascimento": "1990-05-15",
+  "localNascimento": "São Paulo",
+  "horaNascimento": "10:00",
+  "pontoAberto": "Hospital X",
+  "telefone": "1234567890",
+  "email": "joao@example.com"
+}
 
 ### `PUT /paciente/:id`
 PUT http://localhost:3000/paciente/1
